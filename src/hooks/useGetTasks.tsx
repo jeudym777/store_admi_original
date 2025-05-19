@@ -23,8 +23,6 @@ export const useGetTasks = () => {
   useEffect(() => {
     if (!user) return;
 
-    console.log("Configuration du temps réel pour les tâches");
-
     const eventsChannel = supabase
       .channel("tasks-changes")
       .on(
@@ -36,7 +34,7 @@ export const useGetTasks = () => {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log("INSERT reçu:", payload);
+          console.log("INSERT received:", payload);
           queryClient.setQueryData<Task[]>(["tasks"], (oldData = []) => {
             return [payload.new as Task, ...oldData];
           });
@@ -51,7 +49,7 @@ export const useGetTasks = () => {
           filter: `user_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log("UPDATE reçu:", payload);
+          console.log("UPDATE received:", payload);
           queryClient.setQueryData<Task[]>(["tasks"], (oldData = []) => {
             return oldData.map((task) =>
               task.id === payload.new.id ? (payload.new as Task) : task
@@ -65,11 +63,11 @@ export const useGetTasks = () => {
           event: "DELETE",
           schema: "public",
           table: "tasks",
-          // PAS de filtre sur user_id car la ligne est déjà supprimée
+          // No filter on user_id because the line is already deleted
         },
         (payload) => {
-          console.log("DELETE reçu:", payload);
-          // Vérifier si la tâche supprimée est dans notre liste avant de mettre à jour
+          console.log("DELETE received:", payload);
+          // Check if the deleted task is in our list before updating
           queryClient.setQueryData<Task[]>(["tasks"], (oldData = []) => {
             return oldData.filter((task) => task.id !== payload.old.id);
           });
@@ -77,9 +75,9 @@ export const useGetTasks = () => {
       )
       .subscribe();
 
-    // Nettoyage
+    // Cleaning
     return () => {
-      console.log("Nettoyage des souscriptions temps réel");
+      console.log("Cleaning real-time subscriptions");
       supabase.removeChannel(eventsChannel);
     };
   }, [user, queryClient]);

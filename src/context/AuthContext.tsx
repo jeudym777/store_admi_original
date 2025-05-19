@@ -1,11 +1,12 @@
 import { createContext, useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "@/supabaseClient";
 
 type AuthContextType = {
   user: any;
   isLoading: boolean;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,

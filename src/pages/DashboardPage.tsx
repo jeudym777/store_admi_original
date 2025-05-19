@@ -18,12 +18,10 @@ export default function DashboardPage() {
   const onDelete = (id: string) => {
     handleDelete(id, {
       onSuccess: () => {
-        toast.success("Tâche supprimée avec succès");
+        toast.success("Task deleted successfully");
       },
       onError: () => {
-        toast.error(
-          "Une erreur est survenue lors de la suppression de la tâche"
-        );
+        toast.error("An error occurred while deleting the task");
       },
     });
   };
@@ -31,11 +29,11 @@ export default function DashboardPage() {
   const onSubmit = (data: { text: string }) => {
     handleAddTask(data.text, {
       onSuccess: () => {
-        toast.success("Tâche ajoutée avec succès");
+        toast.success("Task added successfully");
         reset();
       },
       onError: () => {
-        toast.error("Une erreur est survenue lors de l'ajout de la tâche");
+        toast.error("An error occurred while adding the task");
       },
     });
   };
@@ -44,7 +42,6 @@ export default function DashboardPage() {
     <Layout>
       <div className="max-w-3xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-          {/* Header avec gradient */}
           <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 px-6 py-4 text-white">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex items-center">
@@ -62,7 +59,7 @@ export default function DashboardPage() {
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <h1 className="text-2xl font-bold">Mes tâches</h1>
+                <h1 className="text-2xl font-bold">My tasks</h1>
               </div>
               <div className="flex items-center bg-indigo-700/50 rounded-full px-4 py-2 text-sm">
                 <span className="mr-2 truncate max-w-[150px] sm:max-w-xs">
@@ -86,20 +83,20 @@ export default function DashboardPage() {
                       d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                     />
                   </svg>
-                  Déconnexion
+                  Logout
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Formulaire d'ajout */}
+          {/* Add form */}
           <div className="px-6 py-5 border-b border-gray-100">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col md:flex-row gap-2">
                 <textarea
                   className="flex-1 border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                   {...register("text", { required: true })}
-                  placeholder="Ajouter une nouvelle tâche..."
+                  placeholder="Add a new task..."
                 />
                 <button
                   type="submit"
@@ -119,16 +116,16 @@ export default function DashboardPage() {
                       d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                     />
                   </svg>
-                  Ajouter
+                  Add
                 </button>
               </div>
             </form>
           </div>
 
-          {/* Liste des éléments */}
+          {/* List of items */}
           <div className="px-6 py-5">
             <h2 className="text-lg font-medium text-gray-700 mb-4">
-              Vos tâches ({data?.length || 0})
+              My tasks ({data?.length || 0})
             </h2>
 
             {isLoading ? (
@@ -154,10 +151,10 @@ export default function DashboardPage() {
                       />
                     </svg>
                     <p className="text-gray-500 text-lg">
-                      Aucune tâche pour le moment
+                      No task for the moment
                     </p>
                     <p className="text-gray-400 mt-1">
-                      Ajoutez votre première tâche ci-dessus
+                      Add your first task above
                     </p>
                   </div>
                 ) : (
@@ -196,10 +193,10 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {/* Footer avec conseils */}
+            {/* Footer */}
             {data && data.length > 0 && (
               <div className="mt-8 pt-4 border-t border-gray-100 text-center text-sm text-gray-500">
-                Conseil : Cliquez sur une tâche pour la marquer comme complétée
+                Tip: Click on a task to mark it as completed
               </div>
             )}
           </div>

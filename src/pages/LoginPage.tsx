@@ -28,7 +28,7 @@ export default function LoginPage() {
       toast.error(error.message);
     } else {
       navigate("/dashboard");
-      toast.success("Vous êtes connecté avec succès!");
+      toast.success("You are logged in successfully!");
     }
 
     setLoading(false);
@@ -46,7 +46,7 @@ export default function LoginPage() {
       toast.error(error.message);
     } else {
       navigate("/dashboard");
-      toast.success("Vous êtes connecté avec succès!");
+      toast.success("You are logged in successfully!");
     }
 
     setLoading(false);
@@ -58,10 +58,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
           <div className="bg-indigo-600 p-6 text-white">
             <h1 className="text-2xl font-bold text-center">
-              Bienvenue sur TodoMaster
+              Welcome to TodoMaster
             </h1>
             <p className="text-indigo-100 text-center mt-2">
-              Connectez-vous pour gérer vos tâches
+              Login to manage your tasks
             </p>
           </div>
 
@@ -72,13 +72,13 @@ export default function LoginPage() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Adresse email
+                  Email
                 </label>
                 <input
                   id="email"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                   type="email"
-                  placeholder="votre@email.com"
+                  placeholder="your@email.com"
                   {...register("email", { required: true })}
                 />
               </div>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  Mot de passe
+                  Password
                 </label>
                 <input
                   id="password"
@@ -129,10 +129,10 @@ export default function LoginPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Chargement...
+                    Loading...
                   </span>
                 ) : (
-                  "Connexion"
+                  "Login"
                 )}
               </button>
 
@@ -142,13 +142,13 @@ export default function LoginPage() {
                 disabled={loading || !formState.isValid}
                 className="cursor-pointer flex-1 bg-white text-indigo-600 border border-indigo-600 py-3 px-4 rounded-lg hover:bg-indigo-50 disabled:opacity-50 transition-colors shadow-sm font-medium"
               >
-                {loading ? "Chargement..." : "Inscription"}
+                {loading ? "Loading..." : "Register"}
               </button>
             </div>
 
             <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-gray-300"></div>
-              <span className="flex-shrink mx-4 text-gray-500 text-sm">ou</span>
+              <span className="flex-shrink mx-4 text-gray-500 text-sm">or</span>
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
@@ -178,7 +178,7 @@ export default function LoginPage() {
                 />
                 <path fill="none" d="M1 1h22v22H1z" />
               </svg>
-              Continuer avec Google
+              Continue with Google
             </button>
           </form>
         </div>
