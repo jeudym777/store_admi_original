@@ -26,6 +26,8 @@ bun run dev
 
 ## List of installed packages
 
+- react-router-dom
+- react-icons
 - react-hook-form
 - @tanstack/react-query
 - react-toastify
