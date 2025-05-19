@@ -3,23 +3,23 @@ import { supabase } from "../supabaseClient";
 
 type AuthContextType = {
   user: any;
-  loading: boolean;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true,
+  isLoading: true,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       setUser(data.user || null);
-      setLoading(false);
+      setIsLoading(false);
     };
 
     getUser();
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

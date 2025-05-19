@@ -2,6 +2,8 @@
 
 ## Install Supabase
 
+You need Docker to install supabase locally.
+
 ```bash
 npm install supabase --save-dev
 npx supabase init
@@ -15,6 +17,8 @@ bun install
 ```
 
 ## Set env vars in .env
+
+You'll need the anon key and supabase API url.
 
 ```
 bun run dev
