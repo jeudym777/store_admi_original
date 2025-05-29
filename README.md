@@ -10,6 +10,12 @@ npx supabase init
 npx supabase start
 ```
 
+## Create table
+
+Run sample-db.sql query in supabase studio > SQL editor.
+
+Don't forget to enable Realtime in Table Editor > Tasks > Realtime on.
+
 ## Install project
 
 ```

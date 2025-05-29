@@ -1,4 +1,4 @@
--- Créer une table pour votre application
+-- Create a table for the tasks
 CREATE TABLE tasks (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -6,21 +6,21 @@ CREATE TABLE tasks (
   user_id UUID REFERENCES auth.users(id) NOT NULL
 );
 
--- Ajouter une politique Row Level Security (RLS)
+-- Add Row Level Security (RLS)
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
--- Politique pour permettre aux utilisateurs de voir uniquement leurs propres éléments
-CREATE POLICY "Utilisateurs peuvent voir leurs propres éléments" ON tasks
+-- Policy to allow users to see only their own items
+CREATE POLICY "Users can see their own items" ON tasks
   FOR SELECT USING (auth.uid() = user_id);
 
--- Politique pour permettre aux utilisateurs de créer leurs propres éléments
-CREATE POLICY "Utilisateurs peuvent créer leurs propres éléments" ON tasks
+-- Policy to allow users to create their own items
+CREATE POLICY "Users can create their own items" ON tasks
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Politique pour permettre aux utilisateurs de modifier leurs propres éléments
-CREATE POLICY "Utilisateurs peuvent modifier leurs propres éléments" ON tasks
+-- Policy to allow users to update their own items
+CREATE POLICY "Users can update their own items" ON tasks
   FOR UPDATE USING (auth.uid() = user_id);
 
--- Politique pour permettre aux utilisateurs de supprimer leurs propres éléments
-CREATE POLICY "Utilisateurs peuvent supprimer leurs propres éléments" ON tasks
+-- Policy to allow users to delete their own items
+CREATE POLICY "Users can delete their own items" ON tasks
   FOR DELETE USING (auth.uid() = user_id);
