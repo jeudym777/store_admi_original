@@ -5,7 +5,9 @@ import { useSignOut } from "@/hooks/useSignOut";
 import { useDeleteTask } from "@/hooks/useDeleteTask";
 import { useAddTask } from "@/hooks/useAddTask";
 import { toast } from "react-toastify";
-import Layout from "./Layout";
+import Layout from "./Layout"; 
+import ProductsPage from "@/pages/ProductsPage";
+import { Route } from "react-router-dom";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -196,12 +198,20 @@ export default function DashboardPage() {
             {/* Footer */}
             {data && data.length > 0 && (
               <div className="mt-8 pt-4 border-t border-gray-100 text-center text-sm text-gray-500">
-                Tip: Click on a task to mark it as completed
+                Creado por Ingeniero Yeudi Martinez ss
+                <ProductsPage />
+
               </div>
+
+              
             )}
           </div>
-        </div>
+        </div>            
+ 
       </div>
+
+
     </Layout>
+
   );
 }

@@ -9,18 +9,23 @@ import { Route } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import HomePage from "@/pages/HomePage";
-
+ 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
+          <Routes> 
+
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} /> 
 
             <Route element={<ProtectedRoute />}>
+ 
               <Route path="/dashboard" element={<DashboardPage />} />
+              
+ 
             </Route>
           </Routes>
         </BrowserRouter>
