@@ -46,7 +46,7 @@ export default function ProductsPage() {
         const file = files[i];
         const filePath = `${user.id}/${Date.now()}-${file.name}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { data: _uploadedImage, error: uploadError } = await supabase.storage
           .from("images")
           .upload(filePath, file);
 
