@@ -9,12 +9,12 @@ export default function HomePage() {
     <Layout>
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-indigo-600 mb-6">
-          Welcome to TodoMaster
+          Welcome Admi to YEOOSTORE
         </h1>
 
         <div className="max-w-2xl mx-auto">
           <p className="text-lg text-gray-700 mb-8">
-            Organize your life simply and efficiently. TodoMaster helps you
+            Organize your products simply and efficiently. Administrator page helps you
             manage your daily tasks without effort to stay productive and
             focused on what really matters.
           </p>
@@ -36,7 +36,7 @@ export default function HomePage() {
               clipRule="evenodd"
             />
           </svg>
-          See my to-do
+          Login
         </Link>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
