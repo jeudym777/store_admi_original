@@ -20,6 +20,7 @@ export default function ProductsPage() {
   const { mutate: handleDeleteProduct } = useDeleteProduct();
   const [files, setFiles] = useState<FileList | null>(null);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   const deleteOldImages = async (productId: number) => {
     const { data: oldImages, error } = await supabase
@@ -145,6 +146,8 @@ export default function ProductsPage() {
     reset();
     setFiles(null);
     refetch();
+    setPreviewUrls([]);
+
   };
 
   return (
@@ -174,12 +177,39 @@ export default function ProductsPage() {
             type="file"
             accept="image/*"
             multiple
-            onChange={(e) => setFiles(e.target.files)}
+            onChange={(e) => {
+              const selectedFiles = e.target.files;
+              if (!selectedFiles) return;
+              setFiles(selectedFiles);
+
+              const urls = Array.from(selectedFiles).map((file) => URL.createObjectURL(file));
+              setPreviewUrls(urls);
+            }}
             className="w-full border p-3 rounded"
           />
+
           <button className="bg-indigo-600 text-white px-5 py-3 rounded hover:bg-indigo-700 w-full">
             {editingProductId ? "Actualizar producto" : "Agregar producto"}
           </button>
+
+          {previewUrls.length > 0 && (
+            <div className="mt-4">
+              <h4 className="font-semibold mb-2 text-gray-700">Previsualización:</h4>
+              <div className="flex flex-wrap gap-3">
+                {previewUrls.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Preview ${index + 1}`}
+                    className="w-24 h-24 object-cover rounded border"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+   
+
+
         </form>
 
         {isLoading ? (
@@ -236,6 +266,8 @@ export default function ProductsPage() {
                         price: item.price,
                       });
                       setFiles(null);
+                      setPreviewUrls([]);
+
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                     className="text-blue-600 hover:underline"
