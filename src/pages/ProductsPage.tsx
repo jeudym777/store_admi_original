@@ -218,7 +218,7 @@ export default function ProductsPage() {
           <p className="text-center text-gray-500">No hay productos aún.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.map((item) => (
+            {data?.map((item) => (
               <div
                 key={item.id}
                 className="border rounded-xl shadow hover:shadow-lg transition duration-300 p-4 bg-white flex flex-col justify-between"
