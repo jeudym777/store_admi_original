@@ -10,6 +10,9 @@ export async function fetchProducts() {
       name_product,
       description,
       price,
+      category,
+      stock,
+      discount,
       product_images (
         id,
         image_url,

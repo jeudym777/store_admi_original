@@ -11,12 +11,30 @@ type ProductFormInput = {
   name_product: string;
   description: string;
   price: number;
+  category: string;
+  stock: number;
+  discount: number;
 };
 
 export default function ProductsPage() {
   const { user } = useAuth();
   const { register, handleSubmit, reset } = useForm<ProductFormInput>();
-  const { data, isLoading, refetch } = useGetProducts();
+  type ProductItem = {
+    id: any;
+    name_product: any;
+    description: any;
+    price: any;
+    category: any;
+    stock: any;
+    discount: any;
+    product_images: { id: any; image_url: any; position: any }[];
+  };
+
+  const { data, isLoading, refetch } = useGetProducts() as {
+    data: ProductItem[] | undefined;
+    isLoading: boolean;
+    refetch: () => void;
+  };
   const { mutate: handleDeleteProduct } = useDeleteProduct();
   const [files, setFiles] = useState<FileList | null>(null);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
@@ -48,14 +66,14 @@ export default function ProductsPage() {
       return;
     }
 
-    const { name_product, description, price } = formData;
+    const { name_product, description, price, category, stock, discount } = formData;
 
     if (editingProductId) {
       // Actualizar datos del producto
       const { error } = await supabase
         .from("products")
-        .update({ name_product, description, price })
-        .eq("id", editingProductId);
+        .update({ name_product, description, price, category, stock, discount })
+.eq("id", editingProductId);
 
       if (error) {
         toast.error("Error al actualizar producto");
@@ -101,7 +119,7 @@ export default function ProductsPage() {
       // Crear producto nuevo
       const { data: product, error: errorProduct } = await supabase
         .from("products")
-        .insert([{ name_product, description, price, user_id: user.id }])
+        .insert([{ name_product, description, price, category, stock, discount, user_id: user.id }])
         .select()
         .single();
 
@@ -173,6 +191,42 @@ export default function ProductsPage() {
             className="w-full border p-3 rounded"
             placeholder="Precio"
           />
+
+          <input
+            {...register("category", { required: true })}
+            placeholder="Categoría"
+            className="w-full border p-3 rounded"
+          />
+          <input
+            type="number"
+            {...register("stock", { valueAsNumber: true, required: true })}
+            placeholder="Stock"
+            className="w-full border p-3 rounded"
+          />
+          <input
+            type="number"
+            {...register("discount", { valueAsNumber: true, required: true })}
+            placeholder="Descuento (%)"
+            className="w-full border p-3 rounded"
+          />
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <input
             type="file"
             accept="image/*"
@@ -237,6 +291,9 @@ export default function ProductsPage() {
                   {item.name_product}
                 </h3>
                 <p className="text-gray-600 text-sm line-clamp-2">{item.description}</p>
+                <p className="text-sm text-gray-700">Categoría: {item.category}</p>
+                <p className="text-sm text-gray-700">Stock: {item.stock}</p>
+                <p className="text-sm text-gray-700">Descuento: {item.discount}%</p>
                 <p className="text-indigo-700 font-bold mt-2 text-lg">
                   ₡{Number(item.price).toLocaleString("es-CR")}
                 </p>
