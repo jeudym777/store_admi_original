@@ -18,7 +18,9 @@ type ProductFormInput = {
 
 export default function ProductsPage() {
   const { user } = useAuth();
+  const [contentFile, setContentFile] = useState<File | null>(null);
   const { register, handleSubmit, reset } = useForm<ProductFormInput>();
+
   type ProductItem = {
     id: any;
     name_product: any;
@@ -27,6 +29,7 @@ export default function ProductsPage() {
     category: any;
     stock: any;
     discount: any;
+    digital_url?: string;
     product_images: { id: any; image_url: any; position: any }[];
   };
 
@@ -73,7 +76,7 @@ export default function ProductsPage() {
       const { error } = await supabase
         .from("products")
         .update({ name_product, description, price, category, stock, discount })
-.eq("id", editingProductId);
+        .eq("id", editingProductId);
 
       if (error) {
         toast.error("Error al actualizar producto");
@@ -127,6 +130,30 @@ export default function ProductsPage() {
         toast.error("Error al agregar producto");
         return;
       }
+
+      // Subir archivo digital si existe
+      if (contentFile) {
+        const filePath = `${user.id}/${Date.now()}-${contentFile.name}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("digitalcontent") // asegúrate que sea el nombre del bucket
+          .upload(filePath, contentFile);
+
+        if (uploadError) {
+          toast.error("Error al subir archivo digital");
+        } else {
+          const publicUrl = supabase.storage
+            .from("digitalcontent")
+            .getPublicUrl(filePath).data.publicUrl;
+
+          // Si tienes una columna en la tabla 'products' para este archivo:
+          await supabase
+            .from("products")
+            .update({ digital_url: publicUrl }) // <--- o como se llame tu campo
+            .eq("id", product.id);
+        }
+      }
+
 
       if (files && files.length > 0) {
         for (let i = 0; i < files.length; i++) {
@@ -210,7 +237,7 @@ export default function ProductsPage() {
             className="w-full border p-3 rounded"
           />
 
-          
+
 
 
 
@@ -242,6 +269,24 @@ export default function ProductsPage() {
             className="w-full border p-3 rounded"
           />
 
+          <label className="block mt-4">
+            <span className="font-medium text-gray-700">Archivo digital (.zip, .rar)</span>
+            <input
+              type="file"
+              accept=".zip,.rar"
+              onChange={e => setContentFile(e.target.files?.[0] ?? null)}
+              className="w-full border p-3 rounded mt-1"
+            />
+          </label>
+          {contentFile && (
+            <p className="text-sm text-gray-600 mt-1">
+              📦 Archivo seleccionado: <strong>{contentFile.name}</strong>
+            </p>
+          )}
+
+
+
+
           <button className="bg-indigo-600 text-white px-5 py-3 rounded hover:bg-indigo-700 w-full">
             {editingProductId ? "Actualizar producto" : "Agregar producto"}
           </button>
@@ -261,7 +306,7 @@ export default function ProductsPage() {
               </div>
             </div>
           )}
-   
+
 
 
         </form>
@@ -284,7 +329,8 @@ export default function ProductsPage() {
                     alt={item.name_product}
                     className="w-full h-full object-cover"
                   />
-                </div>
+                </div>{/* Botón de descarga de archivo digital */}
+ 
 
                 {/* Info */}
                 <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
@@ -297,6 +343,21 @@ export default function ProductsPage() {
                 <p className="text-indigo-700 font-bold mt-2 text-lg">
                   ₡{Number(item.price).toLocaleString("es-CR")}
                 </p>
+                {/* Botón de descarga de archivo digital */}
+                {item.digital_url && (
+                  <a
+                    href={item.digital_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center justify-center px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded text-sm font-semibold transition"
+                  >
+                    📦 Descargar archivo
+                  </a>
+                )}
+
+
+
+
 
                 {/* Miniaturas */}
                 {item.product_images?.length > 1 && (
