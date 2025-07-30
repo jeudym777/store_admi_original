@@ -13,6 +13,7 @@ export async function fetchProducts() {
       category,
       stock,
       discount,
+      content_url,
       product_images (
         id,
         image_url,

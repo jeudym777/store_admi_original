@@ -29,7 +29,7 @@ export default function ProductsPage() {
     category: any;
     stock: any;
     discount: any;
-    digital_url?: string;
+    content_url?: string;
     product_images: { id: any; image_url: any; position: any }[];
   };
 
@@ -149,7 +149,7 @@ export default function ProductsPage() {
           // Si tienes una columna en la tabla 'products' para este archivo:
           await supabase
             .from("products")
-            .update({ digital_url: publicUrl }) // <--- o como se llame tu campo
+            .update({ content_url : publicUrl }) // <--- o como se llame tu campo
             .eq("id", product.id);
         }
       }
@@ -344,9 +344,9 @@ export default function ProductsPage() {
                   ₡{Number(item.price).toLocaleString("es-CR")}
                 </p>
                 {/* Botón de descarga de archivo digital */}
-                {item.digital_url && (
+                {item.content_url  && (
                   <a
-                    href={item.digital_url}
+                    href={item.content_url }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex items-center justify-center px-4 py-2 text-white bg-green-500 hover:bg-green-600 rounded text-sm font-semibold transition"
