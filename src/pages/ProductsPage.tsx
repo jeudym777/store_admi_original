@@ -10,10 +10,12 @@ import { useState } from "react";
 type ProductFormInput = {
   name_product: string;
   description: string;
-  price: number;
+  price_month: number;
+  price_year: number;
   category: string;
   stock: number;
   discount: number;
+  link_product: string;
 };
 
 export default function ProductsPage() {
@@ -25,19 +27,27 @@ export default function ProductsPage() {
     id: any;
     name_product: any;
     description: any;
-    price: any;
+    price_month: any;
+    price_year: any;
     category: any;
     stock: any;
     discount: any;
+    link_product: any;
     content_url?: string;
     product_images: { id: any; image_url: any; position: any }[];
   };
 
-  const { data, isLoading, refetch } = useGetProducts() as {
+  const { data, isLoading, refetch, error } = useGetProducts() as {
     data: ProductItem[] | undefined;
     isLoading: boolean;
     refetch: () => void;
+    error: any;
   };
+
+  // Debug info
+  console.log("Products data:", data);
+  console.log("Is loading:", isLoading);
+  console.log("Error:", error);
   const { mutate: handleDeleteProduct } = useDeleteProduct();
   const [files, setFiles] = useState<FileList | null>(null);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
@@ -69,13 +79,17 @@ export default function ProductsPage() {
       return;
     }
 
-    const { name_product, description, price, category, stock, discount } = formData;
+    const { name_product, description, price_month, price_year, category, stock, discount, link_product } = formData;
+    
+    // Debug: Ver qué datos estamos enviando
+    console.log("Form data:", formData);
+    console.log("User ID:", user.id);
 
     if (editingProductId) {
       // Actualizar datos del producto
       const { error } = await supabase
         .from("products")
-        .update({ name_product, description, price, category, stock, discount })
+        .update({ name_product, description, price_month, price_year, category, stock, discount, link_product })
         .eq("id", editingProductId);
 
       if (error) {
@@ -120,9 +134,23 @@ export default function ProductsPage() {
       setEditingProductId(null);
     } else {
       // Crear producto nuevo
+      const productData = {
+        name_product,
+        description,
+        price_month: Number(price_month),
+        price_year: price_year ? Number(price_year) : null,
+        category,
+        stock: Number(stock),
+        discount: Number(discount),
+        link_product: link_product || null,
+        user_id: user.id
+      };
+      
+      console.log("Inserting product:", productData);
+      
       const { data: product, error: errorProduct } = await supabase
         .from("products")
-        .insert([{ name_product, description, price, category, stock, discount, user_id: user.id }])
+        .insert([productData])
         .select()
         .single();
 
@@ -214,9 +242,16 @@ export default function ProductsPage() {
           <input
             type="number"
             step="0.01"
-            {...register("price", { required: true })}
+            {...register("price_month", { required: true })}
             className="w-full border p-3 rounded"
-            placeholder="Precio"
+            placeholder="Precio mensual"
+          />
+          <input
+            type="number"
+            step="0.01"
+            {...register("price_year", { required: false })}
+            className="w-full border p-3 rounded"
+            placeholder="Precio anual (opcional)"
           />
 
           <input
@@ -236,38 +271,47 @@ export default function ProductsPage() {
             placeholder="Descuento (%)"
             className="w-full border p-3 rounded"
           />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) => {
-              const selectedFiles = e.target.files;
-              if (!selectedFiles) return;
-              setFiles(selectedFiles);
-
-              const urls = Array.from(selectedFiles).map((file) => URL.createObjectURL(file));
-              setPreviewUrls(urls);
-            }}
+            type="url"
+            {...register("link_product", { required: false })}
+            placeholder="Link del producto (opcional)"
             className="w-full border p-3 rounded"
           />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <label className="block">
+            <span className="font-medium text-gray-700">Seleccionar imágenes del producto</span>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                const selectedFiles = e.target.files;
+                if (!selectedFiles) return;
+                setFiles(selectedFiles);
+
+                const urls = Array.from(selectedFiles).map((file) => URL.createObjectURL(file));
+                setPreviewUrls(urls);
+              }}
+              className="w-full border p-3 rounded mt-1"
+            />
+          </label>
 
           <label className="block mt-4">
             <span className="font-medium text-gray-700">Archivo digital (.zip, .rar)</span>
@@ -340,9 +384,26 @@ export default function ProductsPage() {
                 <p className="text-sm text-gray-700">Categoría: {item.category}</p>
                 <p className="text-sm text-gray-700">Stock: {item.stock}</p>
                 <p className="text-sm text-gray-700">Descuento: {item.discount}%</p>
-                <p className="text-indigo-700 font-bold mt-2 text-lg">
-                  ₡{Number(item.price).toLocaleString("es-CR")}
-                </p>
+                <div className="mt-2">
+                  <p className="text-indigo-700 font-bold text-lg">
+                    Mensual: ₡{Number(item.price_month).toLocaleString("es-CR")}
+                  </p>
+                  {item.price_year && (
+                    <p className="text-green-700 font-bold text-lg">
+                      Anual: ₡{Number(item.price_year).toLocaleString("es-CR")}
+                    </p>
+                  )}
+                </div>
+                {item.link_product && (
+                  <a
+                    href={item.link_product}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center justify-center px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded text-sm font-semibold transition"
+                  >
+                    🔗 Ver producto
+                  </a>
+                )}
                 {/* Botón de descarga de archivo digital */}
                 {item.content_url  && (
                   <a
@@ -381,7 +442,12 @@ export default function ProductsPage() {
                       reset({
                         name_product: item.name_product,
                         description: item.description,
-                        price: item.price,
+                        price_month: item.price_month,
+                        price_year: item.price_year,
+                        category: item.category,
+                        stock: item.stock,
+                        discount: item.discount,
+                        link_product: item.link_product,
                       });
                       setFiles(null);
                       setPreviewUrls([]);
