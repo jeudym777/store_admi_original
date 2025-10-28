@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDeleteClient } from '@/hooks/useDeleteClient';
 import type { Client } from '@/types/client';
-import { generateQRCodeImage, getLoyaltyLevelColor, formatTipoIdentificacion } from '@/utils/clientUtils';
+import { getLoyaltyLevelColor, formatTipoIdentificacion } from '@/utils/clientUtils';
 
 interface ClientCardProps {
   client: Client;
@@ -11,20 +11,7 @@ interface ClientCardProps {
 
 export default function ClientCard({ client, onViewQR, onAddPoints }: ClientCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [qrImage, setQrImage] = useState<string>('');
   const { mutate: deleteClient, isPending } = useDeleteClient();
-
-  useEffect(() => {
-    const generateQR = async () => {
-      try {
-        const image = await generateQRCodeImage(client.qr_code);
-        setQrImage(image);
-      } catch (error) {
-        console.error('Error generating QR image:', error);
-      }
-    };
-    generateQR();
-  }, [client.qr_code]);
 
   const handleDelete = () => {
     deleteClient(client.id, {

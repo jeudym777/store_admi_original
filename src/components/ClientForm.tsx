@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAddClient } from '@/hooks/useAddClient';
-import type { NewClient, TipoIdentificacion } from '@/types/client';
+import type { NewClient } from '@/types/client';
 import { MESES, TIPOS_IDENTIFICACION } from '@/types/client';
 import { formatTipoIdentificacion } from '@/utils/clientUtils';
 
