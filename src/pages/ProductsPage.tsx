@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Layout from "./Layout";
 import { supabase } from "@/supabaseClient";
 import { useState } from "react";
+import { checkStorageConfiguration, uploadImageWithRetry, getStorageInstructions, testSupabaseConnection } from "@/utils/storageUtils";
 
 type ProductFormInput = {
   name_product: string;
@@ -52,6 +53,53 @@ export default function ProductsPage() {
   const [files, setFiles] = useState<FileList | null>(null);
   const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const [isCheckingStorage, setIsCheckingStorage] = useState(false);
+
+  const handleStorageDiagnostic = async () => {
+    setIsCheckingStorage(true);
+    console.log('🔍 Iniciando diagnóstico completo...');
+    
+    try {
+      // Primero probar la conexión general
+      console.log('🔌 Paso 1: Probando conexión con Supabase...');
+      const connectionOk = await testSupabaseConnection();
+      
+      if (!connectionOk) {
+        toast.error("❌ Error de conexión con Supabase");
+        return;
+      }
+      
+      // Luego verificar Storage específicamente
+      console.log('📦 Paso 2: Verificando buckets de Storage...');
+      const result = await checkStorageConfiguration();
+      
+      if (result.success) {
+        if (result.hasImagesBucket && result.hasDigitalContentBucket) {
+          toast.success(`✅ Storage configurado correctamente! Buckets: ${result.buckets?.join(', ')}`);
+          console.log('🎉 ¡Todo está funcionando perfectamente!');
+        } else {
+          const instructions = getStorageInstructions();
+          toast.error("❌ Faltan buckets. Revisa la consola para instrucciones detalladas.");
+          console.log('📋 INSTRUCCIONES DETALLADAS:', instructions.message);
+          console.log('🔗 Dashboard:', instructions.dashboardUrl);
+          
+          // Información adicional
+          console.log('🔍 Buckets faltantes:');
+          if (!result.hasImagesBucket) console.log('   ❌ Falta bucket "images"');
+          if (!result.hasDigitalContentBucket) console.log('   ❌ Falta bucket "digitalcontent"');
+        }
+        console.log('📊 Resultado completo del diagnóstico:', result);
+      } else {
+        toast.error(`❌ Error en diagnóstico: ${result.error}`);
+        console.log('❌ Error detallado:', result);
+      }
+    } catch (error) {
+      console.error('❌ Error inesperado durante el diagnóstico:', error);
+      toast.error('❌ Error inesperado durante el diagnóstico');
+    } finally {
+      setIsCheckingStorage(false);
+    }
+  };
 
   const deleteOldImages = async (productId: number) => {
     const { data: oldImages, error } = await supabase
@@ -76,6 +124,24 @@ export default function ProductsPage() {
   const onSubmit = async (formData: ProductFormInput) => {
     if (!user?.id) {
       toast.error("Usuario no autenticado");
+      return;
+    }
+
+    // Verificar configuración de Storage antes de proceder
+    console.log("🔍 Verificando configuración de Storage...");
+    const storageCheck = await checkStorageConfiguration();
+    
+    if (!storageCheck.success) {
+      toast.error(`Error de configuración de Storage: ${storageCheck.error}`);
+      return;
+    }
+    
+    if (!storageCheck.hasImagesBucket) {
+      console.log("📦 Bucket 'images' no encontrado.");
+      const instructions = getStorageInstructions();
+      toast.error("❌ Faltan buckets requeridos. Revisa la consola para instrucciones.");
+      console.log('📋 INSTRUCCIONES:', instructions.message);
+      console.log('🔗 Dashboard:', instructions.dashboardUrl);
       return;
     }
 
@@ -105,27 +171,38 @@ export default function ProductsPage() {
           const file = files[i];
           const filePath = `${user.id}/${Date.now()}-${file.name}`;
 
-          const { error: uploadError } = await supabase.storage
-            .from("images")
-            .upload(filePath, file);
+          try {
+            console.log(`📤 Subiendo imagen ${i + 1}/${files.length}: ${file.name}`);
+            
+            const uploadResult = await uploadImageWithRetry(file, filePath);
 
-          if (uploadError) {
-            toast.error(`Error al subir imagen ${file.name}`);
-            continue;
-          }
+            if (!uploadResult || uploadResult.error) {
+              const errorMsg = uploadResult?.error?.message || uploadResult?.error || 'Error desconocido';
+              console.error(`❌ Error al subir imagen ${file.name}:`, uploadResult?.error);
+              toast.error(`Error al subir imagen ${file.name}: ${errorMsg}`);
+              continue;
+            }
 
-          const imageUrl = supabase.storage.from("images").getPublicUrl(filePath).data.publicUrl;
+            const imageUrl = supabase.storage.from("images").getPublicUrl(filePath).data.publicUrl;
+            console.log(`✅ Imagen subida, URL generada: ${imageUrl}`);
 
-          const { error: insertImageError } = await supabase.from("product_images").insert([
-            {
-              product_id: editingProductId,
-              image_url: imageUrl,
-              position: i + 1,
-            },
-          ]);
+            const { error: insertImageError } = await supabase.from("product_images").insert([
+              {
+                product_id: editingProductId,
+                image_url: imageUrl,
+                position: i + 1,
+              },
+            ]);
 
-          if (insertImageError) {
-            toast.error(`Error al guardar imagen ${file.name}`);
+            if (insertImageError) {
+              console.error(`❌ Error al guardar imagen en DB:`, insertImageError);
+              toast.error(`Error al guardar imagen ${file.name} en la base de datos`);
+            } else {
+              console.log(`✅ Imagen ${file.name} guardada exitosamente en DB`);
+            }
+          } catch (error) {
+            console.error(`❌ Error inesperado con imagen ${file.name}:`, error);
+            toast.error(`Error inesperado al procesar imagen ${file.name}`);
           }
         }
       }
@@ -184,31 +261,43 @@ export default function ProductsPage() {
 
 
       if (files && files.length > 0) {
+        console.log(`📤 Subiendo ${files.length} imágenes para producto nuevo...`);
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const filePath = `${user.id}/${Date.now()}-${file.name}`;
 
-          const { error: uploadError } = await supabase.storage
-            .from("images")
-            .upload(filePath, file);
+          try {
+            console.log(`📤 Subiendo imagen ${i + 1}/${files.length}: ${file.name}`);
+            
+            const uploadResult = await uploadImageWithRetry(file, filePath);
 
-          if (uploadError) {
-            toast.error(`Error al subir imagen ${file.name}`);
-            continue;
-          }
+            if (!uploadResult || uploadResult.error) {
+              const errorMsg = uploadResult?.error?.message || uploadResult?.error || 'Error desconocido';
+              console.error(`❌ Error al subir imagen ${file.name}:`, uploadResult?.error);
+              toast.error(`Error al subir imagen ${file.name}: ${errorMsg}`);
+              continue;
+            }
 
-          const imageUrl = supabase.storage.from("images").getPublicUrl(filePath).data.publicUrl;
+            const imageUrl = supabase.storage.from("images").getPublicUrl(filePath).data.publicUrl;
+            console.log(`✅ Imagen subida, URL generada: ${imageUrl}`);
 
-          const { error: insertImageError } = await supabase.from("product_images").insert([
-            {
-              product_id: product.id,
-              image_url: imageUrl,
-              position: i + 1,
-            },
-          ]);
+            const { error: insertImageError } = await supabase.from("product_images").insert([
+              {
+                product_id: product.id,
+                image_url: imageUrl,
+                position: i + 1,
+              },
+            ]);
 
-          if (insertImageError) {
-            toast.error(`Error al guardar la imagen ${file.name}`);
+            if (insertImageError) {
+              console.error(`❌ Error al guardar imagen en DB:`, insertImageError);
+              toast.error(`Error al guardar imagen ${file.name} en la base de datos`);
+            } else {
+              console.log(`✅ Imagen ${file.name} guardada exitosamente en DB`);
+            }
+          } catch (error) {
+            console.error(`❌ Error inesperado con imagen ${file.name}:`, error);
+            toast.error(`Error inesperado al procesar imagen ${file.name}`);
           }
         }
       }
@@ -226,7 +315,17 @@ export default function ProductsPage() {
   return (
     <Layout>
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center">Mis Productos</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Mis Productos</h1>
+          <button
+            type="button"
+            onClick={handleStorageDiagnostic}
+            disabled={isCheckingStorage}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {isCheckingStorage ? '🔍 Verificando...' : '🔍 Verificar Storage'}
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mb-8 space-y-4">
           <input
