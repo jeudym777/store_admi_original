@@ -8,25 +8,28 @@ export default function HomePage() {
   return (
     <Layout>
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-indigo-600 mb-6">
-          Welcome Admi to YEOOSTORE
-        </h1>
+        <div className="animate-slide-up">
+          <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-700 bg-clip-text text-transparent mb-6 leading-tight">
+            Welcome to YEOOSTORE
+          </h1>
+          <p className="text-xl text-gray-500 mb-3">Panel de Administración</p>
+        </div>
 
-        <div className="max-w-2xl mx-auto">
-          <p className="text-lg text-gray-700 mb-8">
-            Organize your products simply and efficiently. Administrator page helps you
-            manage your daily tasks without effort to stay productive and
-            focused on what really matters.
+        <div className="max-w-2xl mx-auto animate-fade-in">
+          <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+            Organiza tus productos de forma simple y eficiente. La página de administrador te ayuda
+            a gestionar tus tareas diarias sin esfuerzo para mantenerte productivo y
+            enfocado en lo que realmente importa.
           </p>
         </div>
 
         <Link
           to="/dashboard"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center"
+          className="bg-gradient-to-r from-sky-600 to-indigo-700 hover:from-sky-700 hover:to-indigo-800 text-white font-semibold py-4 px-10 rounded-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-glow-lg shadow-xl flex items-center gap-2 group"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
+            className="h-6 w-6 group-hover:rotate-12 transition-transform duration-300"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -36,37 +39,37 @@ export default function HomePage() {
               clipRule="evenodd"
             />
           </svg>
-          Login
+          Iniciar Sesión
         </Link>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-            <div className="text-indigo-500 mb-4 flex justify-center">
-              <TbCheckupList className="text-[3rem]" />
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl border border-white transition-all duration-300 hover:-translate-y-2">
+            <div className="text-sky-600 mb-4 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
+              <TbCheckupList className="text-[3.5rem]" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Easy to use</h3>
-            <p className="text-gray-600">
-              Intuitive interface to manage your tasks.
+            <h3 className="text-xl font-bold mb-3 text-gray-800">Fácil de usar</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Interfaz intuitiva para gestionar tus tareas de manera eficiente.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-            <div className="text-indigo-500 mb-4 flex justify-center">
-              <FiClock className="text-[3rem]" />
+          <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl border border-white transition-all duration-300 hover:-translate-y-2">
+            <div className="text-blue-600 mb-4 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
+              <FiClock className="text-[3.5rem]" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Fast and reactive</h3>
-            <p className="text-gray-600">
-              Smooth experience to allow you to work fast.
+            <h3 className="text-xl font-bold mb-3 text-gray-800">Rápido y reactivo</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Experiencia fluida que te permite trabajar con agilidad.
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-            <div className="text-indigo-500 mb-4 flex justify-center">
-              <IoMdGlobe className="text-[3rem]" />
+          <div className="group bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-2xl border border-white transition-all duration-300 hover:-translate-y-2">
+            <div className="text-indigo-600 mb-4 flex justify-center transform group-hover:scale-110 transition-transform duration-300">
+              <IoMdGlobe className="text-[3.5rem]" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Work everywhere</h3>
-            <p className="text-gray-600">
-              Access your tasks from any device, anywhere.
+            <h3 className="text-xl font-bold mb-3 text-gray-800">Trabaja desde cualquier lugar</h3>
+            <p className="text-gray-600 leading-relaxed">
+              Accede a tus tareas desde cualquier dispositivo, en cualquier momento.
             </p>
           </div>
         </div>

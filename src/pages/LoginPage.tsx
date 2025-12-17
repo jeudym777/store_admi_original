@@ -55,30 +55,30 @@ export default function LoginPage() {
   return (
     <Layout>
       <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-          <div className="bg-indigo-600 p-6 text-white">
-            <h1 className="text-2xl font-bold text-center">
-              Welcome to YeooStore
+        <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 overflow-hidden animate-slide-up">
+          <div className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-700 p-8 text-white">
+            <h1 className="text-3xl font-bold text-center">
+              Bienvenido a YeooStore
             </h1>
-            <p className="text-indigo-100 text-center mt-2">
-              Login to manage your tasks
+            <p className="text-sky-100 text-center mt-2">
+              Inicia sesión para gestionar tu tienda
             </p>
           </div>
 
-          <form className="p-6 space-y-6">
-            <div className="space-y-4">
+          <form className="p-8 space-y-6">
+            <div className="space-y-5">
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
-                  Email
+                  Correo Electrónico
                 </label>
                 <input
                   id="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-200 bg-white/80"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="tu@email.com"
                   {...register("email", { required: true })}
                 />
               </div>
@@ -86,13 +86,13 @@ export default function LoginPage() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
-                  Password
+                  Contraseña
                 </label>
                 <input
                   id="password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all duration-200 bg-white/80"
                   type="password"
                   placeholder="••••••••"
                   {...register("password", { required: true })}
@@ -105,12 +105,12 @@ export default function LoginPage() {
                 type="button"
                 onClick={handleSubmit(onLoginSubmit)}
                 disabled={loading || !formState.isValid}
-                className="cursor-pointer flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-md font-medium"
+                className="cursor-pointer flex-1 bg-gradient-to-r from-sky-600 to-indigo-700 text-white py-3 px-4 rounded-xl hover:from-sky-700 hover:to-indigo-800 disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-glow font-semibold transform hover:scale-[1.02]"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
                     <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -129,10 +129,10 @@ export default function LoginPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Loading...
+                    Cargando...
                   </span>
                 ) : (
-                  "Login"
+                  "Iniciar Sesión"
                 )}
               </button>
 
@@ -140,16 +140,16 @@ export default function LoginPage() {
                 type="button"
                 onClick={handleSubmit(onRegisterSubmit)}
                 disabled={loading || !formState.isValid}
-                className="cursor-pointer flex-1 bg-white text-indigo-600 border border-indigo-600 py-3 px-4 rounded-lg hover:bg-indigo-50 disabled:opacity-50 transition-colors shadow-sm font-medium"
+                className="cursor-pointer flex-1 bg-white text-sky-700 border-2 border-sky-600 py-3 px-4 rounded-xl hover:bg-sky-50 disabled:opacity-50 transition-all duration-300 shadow-md font-semibold transform hover:scale-[1.02]"
               >
-                {loading ? "Loading..." : "Register"}
+                {loading ? "Cargando..." : "Registrarse"}
               </button>
             </div>
 
             <div className="relative flex items-center py-2">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="flex-shrink mx-4 text-gray-500 text-sm">or</span>
-              <div className="flex-grow border-t border-gray-300"></div>
+              <div className="flex-grow border-t-2 border-gray-200"></div>
+              <span className="flex-shrink mx-4 text-gray-400 text-sm font-medium">o continúa con</span>
+              <div className="flex-grow border-t-2 border-gray-200"></div>
             </div>
 
             <button
@@ -157,9 +157,9 @@ export default function LoginPage() {
               onClick={() =>
                 supabase.auth.signInWithOAuth({ provider: "google" })
               }
-              className="cursor-pointer w-full bg-white border border-gray-300 py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors shadow-sm flex items-center justify-center font-medium"
+              className="cursor-pointer w-full bg-white border-2 border-gray-200 py-3 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center font-semibold text-gray-700 transform hover:scale-[1.02]"
             >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -178,7 +178,7 @@ export default function LoginPage() {
                 />
                 <path fill="none" d="M1 1h22v22H1z" />
               </svg>
-              Continue with Google
+              Continuar con Google
             </button>
           </form>
         </div>
